@@ -60,7 +60,7 @@ public final class Main {
                          "\n but used heap size will increase until we get OutOfMemoryException (Press enter to continue)");
         System.in.read();
         while (true) {
-            size += size;
+            size += 2 * size;
             putDocs(50, size);
         }
     }
@@ -77,6 +77,7 @@ public final class Main {
                                .setAsyncBackupCount(1)
                                .setReadBackupData(true);
         config.addMapConfig(incomeDocumentsMapConfig);
+        config.setProperty("hazelcast.map.eviction.batch.size", "2"); //@ahmetmircik suggestion
         return config;
     }
 
