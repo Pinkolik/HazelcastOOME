@@ -35,8 +35,8 @@ public final class Main {
     }
 
     /*
-    * For faster results run with following JVM options -Xms500m -Xmx500m -XX:+HeapDumpOnOutOfMemoryError
-    * */
+     * For faster results run with following JVM options -Xms500m -Xmx500m -XX:+HeapDumpOnOutOfMemoryError
+     * */
     public static void main(final String[] args) throws IOException {
         initHazelcastInstance();
         runOOMETest();
@@ -49,15 +49,15 @@ public final class Main {
 
     private static void runOOMETest() throws IOException {
         int size = 100;
-        LOG.info("First, we fill map with small documents");
+        LOG.info("First, we fill map with small documents (Press enter to continue)");
         System.in.read();
         putDocs(511, size);
         LOG.info("Now, if we keep adding documents of the same size, everything is going to work as usual." +
-                         " Used heap size remains the same so does map size");
+                         "\n Used heap size remains the same so does map size (Press enter to continue)");
         System.in.read();
         putDocs(10, size);
         LOG.info("But if we start putting documents of larger size, number of entries will stay same," +
-                         " but used heap size will increase until we get OutOfMemoryException");
+                         "\n but used heap size will increase until we get OutOfMemoryException (Press enter to continue)");
         System.in.read();
         while (true) {
             size += size;
@@ -68,9 +68,13 @@ public final class Main {
     private static Config getHazelcastConfig() {
         Config config = new Config().setInstanceName(HAZELCAST_INSTANCE);
         MapConfig incomeDocumentsMapConfig =
-                new MapConfig().setName(INCOME_DOCUMENTS_MAP).setMaxIdleSeconds(0).setTimeToLiveSeconds(0)
+                new MapConfig().setName(INCOME_DOCUMENTS_MAP) //This is the config we use on our prod application
+                               .setMaxIdleSeconds(0)
+                               .setTimeToLiveSeconds(0)
                                .setMaxSizeConfig(new MaxSizeConfig(50, MaxSizeConfig.MaxSizePolicy.USED_HEAP_SIZE))
-                               .setMapEvictionPolicy(new IncomeDocumentsEvictionPolicy()).setBackupCount(0).setAsyncBackupCount(1)
+                               .setMapEvictionPolicy(new IncomeDocumentsEvictionPolicy())
+                               .setBackupCount(0)
+                               .setAsyncBackupCount(1)
                                .setReadBackupData(true);
         config.addMapConfig(incomeDocumentsMapConfig);
         return config;
@@ -91,7 +95,7 @@ public final class Main {
         LOG.info("Put document to map with id {} and size {}", documentId, documentBody.length);
         incomeDocumentsMap.set(documentId, documentBody);
         LOG.info("{} takes {} MBytes, has {} entries", INCOME_DOCUMENTS_MAP,
-                  incomeDocumentsMap.getLocalMapStats().getHeapCost() / 1024.0 / 1024.0, incomeDocumentsMap.size());
+                 incomeDocumentsMap.getLocalMapStats().getHeapCost() / 1024.0 / 1024.0, incomeDocumentsMap.size());
         LOG.info("USED HEAP PERCENTAGE {}", (double) incomeDocumentsMap.getLocalMapStats().getHeapCost() * 100.0D /
                 (double) Math.max(maxMemoryInBytes(), 1L));
         LOG.info(incomeDocumentsMap.containsKey(documentId) ? "Entry has been added" : "Entry hasn't been added :(");
