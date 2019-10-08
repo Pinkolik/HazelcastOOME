@@ -1,0 +1,18 @@
+plugins {
+    id 'java'
+}
+
+group 'com.github.pinkolik'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    implementation 'com.hazelcast:hazelcast:3.12.3'
+    implementation 'org.slf4j:slf4j-api:1.7.25'
+}
