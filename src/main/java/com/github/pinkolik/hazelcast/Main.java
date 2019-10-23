@@ -39,12 +39,25 @@ public final class Main {
      * */
     public static void main(final String[] args) throws IOException {
         initHazelcastInstance();
-        runOOMETest();
+        //runOOMETest();
+        testPatchedHazelcast();
     }
 
     private static void initHazelcastInstance() {
         hazelcastInstance = Hazelcast.newHazelcastInstance(getHazelcastConfig());
         incomeDocumentsMap = hazelcastInstance.getMap(INCOME_DOCUMENTS_MAP);
+    }
+
+    private static void testPatchedHazelcast() throws IOException {
+        int size = 100;
+        LOG.info("First, we fill map with small documents (Press enter to continue)");
+        System.in.read();
+        putDocs(511, size);
+        LOG.info("Now, we will test patched hazelcast");
+        while (true) {
+            System.in.read();
+            putDocs(1, size * 2);
+        }
     }
 
     private static void runOOMETest() throws IOException {
@@ -77,7 +90,7 @@ public final class Main {
                                .setAsyncBackupCount(1)
                                .setReadBackupData(true);
         config.addMapConfig(incomeDocumentsMapConfig);
-        config.setProperty("hazelcast.map.eviction.batch.size", "2"); //@ahmetmircik suggestion
+        //config.setProperty("hazelcast.map.eviction.batch.size", "2"); //@ahmetmircik suggestion
         return config;
     }
 

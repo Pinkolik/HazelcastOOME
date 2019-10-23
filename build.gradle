@@ -13,6 +13,6 @@ repositories {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
-    implementation 'com.hazelcast:hazelcast:3.12.3'
+    implementation fileTree(dir: 'hazelcast-patched-lib', include: '*.jar')
     implementation 'org.slf4j:slf4j-simple:1.7.25'
 }
